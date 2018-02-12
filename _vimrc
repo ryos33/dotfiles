@@ -3,6 +3,7 @@ set nocompatible
 " 一旦ファイルタイプ関連を無効化する
 filetype off
 
+
 """"""""""""""""""""""""""""""
 " プラグインのセットアップ
 """"""""""""""""""""""""""""""
@@ -231,7 +232,18 @@ imap [ []<LEFT>
 imap ( ()<LEFT>
 """"""""""""""""""""""""""""""
 
-set cb=unnamedplus,autoselect
+" OSの判定
+if has('win32')
+  let ostype = "Win"
+  set clipboard=unnamedplus,unnamed,autoselect
+elseif has('mac')
+  let ostype = "Mac"
+  set clipboard=unnamedplus,unnamed,autoselect
+else
+  let ostype = system("uname")
+  set clipboard=unnamedplus,autoselect
+endif
+
 
 " filetypeの自動検出(最後の方に書いた方がいいらしい)
 filetype on
@@ -242,10 +254,10 @@ let NERDTreeShowHidden = 1
 nnoremap <silent><C-e> :NERDTreeFocusToggle<CR>
 
 " デフォルトでツリーを表示させる
-" let g:nerdtree_tabs_open_on_console_startup=1
+let g:nerdtree_tabs_open_on_console_startup=1
 " autocmd vimenter * NERDTree
-autocmd StdinReadPre * let s:std_in=1
-autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
+" autocmd StdinReadPre * let s:std_in=1
+" autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
 
 " 他のバッファをすべて閉じた時にNERDTreeが開いていたらNERDTreeも一緒に閉じる。
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
