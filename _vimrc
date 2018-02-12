@@ -50,6 +50,21 @@ NeoBundle 'bronson/vim-trailing-whitespace'
 " less用のsyntaxハイライト
 NeoBundle 'KohPoll/vim-less'
 
+NeoBundle 'basyura/unite-rails'
+NeoBundle 'AndrewRadev/switch.vim'
+NeoBundle 'scrooloose/syntastic'
+let g:syntastic_mode_map = { 'mode': 'passive', 'active_filetypes': ['ruby'] }
+let g:syntastic_ruby_checkers = ['rubocop']
+NeoBundleLazy 'alpaca-tc/alpaca_tags', {
+              \ 'depends': ['Shougo/vimproc'],
+              \ 'autoload' : {
+              \   'commands' : [
+              \     { 'name' : 'AlpacaTagsBundle', 'complete': 'customlist,alpaca_tags#complete_source' },
+              \     { 'name' : 'AlpacaTagsUpdate', 'complete': 'customlist,alpaca_tags#complete_source' },
+              \     'AlpacaTagsSet', 'AlpacaTagsCleanCache', 'AlpacaTagsEnable', 'AlpacaTagsDisable', 'AlpacaTagsKillProcess', 'AlpacaTagsProcessStatus',
+              \ ],
+              \ }}
+
 " 余談: neocompleteは合わなかった。ctrl+pで補完するのが便利
 
 call neobundle#end()
@@ -146,7 +161,7 @@ noremap <C-P> :Unite buffer<CR>
 " ファイル一覧
 noremap <C-N> :Unite -buffer-name=file file<CR>
 " 最近使ったファイルの一覧
-" noremap <C-Z> :Unite file_mru<CR>
+noremap :um :Unite file_mru<CR>
 " sourcesを「今開いているファイルのディレクトリ」とする
 noremap :uff :<C-u>UniteWithBufferDir file -buffer-name=file<CR>
 " ウィンドウを分割して開く
@@ -254,7 +269,7 @@ let NERDTreeShowHidden = 1
 nnoremap <silent><C-e> :NERDTreeFocusToggle<CR>
 
 " デフォルトでツリーを表示させる
-let g:nerdtree_tabs_open_on_console_startup=1
+" let g:nerdtree_tabs_open_on_console_startup=1
 " autocmd vimenter * NERDTree
 " autocmd StdinReadPre * let s:std_in=1
 " autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
@@ -263,4 +278,18 @@ let g:nerdtree_tabs_open_on_console_startup=1
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 
 set mouse=a
+
+" unite-rails
+noremap :rc :<C-u>Unite rails/controller<CR>
+noremap :rm :<C-u>Unite rails/model<CR>
+noremap :rv :<C-u>Unite rails/view<CR>
+noremap :rh :<C-u>Unite rails/helper<CR>
+noremap :rs :<C-u>Unite rails/stylesheet<CR>
+noremap :rj :<C-u>Unite rails/javascript<CR>
+noremap :rl :<C-u>Unite rails/lib<CR>
+noremap :rd :<C-u>Unite rails/db<CR>
+noremap :rcf :<C-u>Unite rails/config<CR>
+noremap <expr>:rg        ':e '.b:rails_root.'/Gemfile<CR>'
+noremap <expr>:rr        ':e '.b:rails_root.'/config/routes.rb<CR>'
+noremap :rt :<C-u>Unite rails/spec<CR>
 
