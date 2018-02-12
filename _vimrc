@@ -157,11 +157,11 @@ autocmd QuickFixCmdPost *grep* cwindow
 " 入力モードで開始する
 let g:unite_enable_start_insert=1
 " バッファ一覧
-noremap <C-P> :Unite buffer<CR>
+noremap <C-P> :<C-u>Unite buffer<CR>
 " ファイル一覧
-noremap <C-N> :Unite -buffer-name=file file<CR>
+noremap <C-N> :<C-u>Unite -buffer-name=file file<CR>
 " 最近使ったファイルの一覧
-noremap :um :Unite file_mru<CR>
+noremap :um :<C-u>Unite file_mru<CR>
 " sourcesを「今開いているファイルのディレクトリ」とする
 noremap :uff :<C-u>UniteWithBufferDir file -buffer-name=file<CR>
 " ウィンドウを分割して開く
@@ -292,4 +292,38 @@ noremap :rcf :<C-u>Unite rails/config<CR>
 noremap <expr>:rg        ':e '.b:rails_root.'/Gemfile<CR>'
 noremap <expr>:rr        ':e '.b:rails_root.'/config/routes.rb<CR>'
 noremap :rt :<C-u>Unite rails/spec<CR>
+
+" <Space>cd で編集中ファイルのカレントディレクトリに移動
+command! -nargs=? -complete=dir -bang CD  call s:ChangeCurrentDir('<args>', '<bang>')
+function! s:ChangeCurrentDir(directory, bang)
+  if a:directory == ''
+    lcd %:p:h
+  else
+    execute 'lcd' . a:directory
+  endif
+
+  if a:bang == ''
+    pwd
+  endif
+endfunction
+nnoremap <silent> <Space>cd :<C-u>CD<CR>
+
+" <Space>cr で git ルート（プロジェクトルート）のディレクトリに移動
+command! -nargs=? -complete=dir -bang CDROOT  call s:ChangeRootDir()
+function! s:ChangeRootDir()
+  let rootDir = system("git rev-parse --show-toplevel")
+  execute 'lcd' . rootDir
+endfunction
+nnoremap <silent> <Space>cr :<C-u>CDROOT<CR>
+
+" <Space>cg でカーソル下文字列で、編集中ファイルのカレントディレクトリを vimgrep
+noremap <Space>cg :<C-u>CD<CR>:vimgrep /<C-r><C-w>/ **/* \| cwin<CR>
+
+" <Space>g でカーソル下文字列で、ルートディレクトリを vimgrep
+noremap <Space>g :<C-u>CDROOT<CR>:vimgrep /<C-r><C-w>/ **/* \| cwin<CR>
+
+" Rails 用 vimgrep の除外ディレクトリ
+set wildignore+=log/**,tmp/**,vendor/**,.bundle/**,.git/**,node_modules/**
+
+set undodir=$HOME/.vimundo
 
